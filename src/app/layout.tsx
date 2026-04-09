@@ -1,21 +1,28 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, IBM_Plex_Mono } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Sora } from "next/font/google";
 import "./globals.css";
 
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-heading",
+const display = Sora({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
+const sans = IBM_Plex_Sans({
+  variable: "--font-body",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 const plexMono = IBM_Plex_Mono({
-  variable: "--font-mono",
+  variable: "--font-code",
   subsets: ["latin"],
   weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
   title: "Agent Config Hub",
-  description: "Local web control plane for skills, rules, and MCP resources.",
+  description: "White-blue local control plane for skills, rules, and MCP resources.",
 };
 
 export default function RootLayout({
@@ -24,8 +31,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className={`${bricolage.variable} ${plexMono.variable}`}>
-      <body>{children}</body>
+    <html lang="zh-CN" className={`${display.variable} ${sans.variable} ${plexMono.variable}`}>
+      <body className="font-sans">{children}</body>
     </html>
   );
 }

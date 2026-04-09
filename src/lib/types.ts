@@ -1,53 +1,65 @@
-export type ResourceKind = "skill" | "rule" | "mcp";
+import { z } from "zod";
 
-export type ResourceStatus =
-  | "source"
-  | "linked"
-  | "broken"
-  | "file"
-  | "config"
-  | "directory";
+export const resourceKindSchema = z.enum(["skill", "rule", "mcp"]);
+export const resourceStatusSchema = z.enum([
+  "source",
+  "linked",
+  "broken",
+  "file",
+  "config",
+  "directory",
+]);
 
-export type ResourceRecord = {
-  id: string;
-  kind: ResourceKind;
-  status: ResourceStatus;
-  name: string;
-  path: string;
-  rootPath: string;
-  rootLabel: string;
-  agentKey: string;
-  agentName: string;
-  relativePath: string;
-  targetPath?: string | null;
-  linkType?: string | null;
-  detail?: string;
-  tags: string[];
-};
+export const resourceRecordSchema = z.object({
+  id: z.string(),
+  kind: resourceKindSchema,
+  status: resourceStatusSchema,
+  name: z.string(),
+  path: z.string(),
+  rootPath: z.string(),
+  rootLabel: z.string(),
+  agentKey: z.string(),
+  agentName: z.string(),
+  relativePath: z.string(),
+  targetPath: z.string().nullable().optional(),
+  linkType: z.string().nullable().optional(),
+  detail: z.string().optional(),
+  tags: z.array(z.string()),
+});
 
-export type RootRecord = {
-  id: string;
-  kind: ResourceKind;
-  agentKey: string;
-  agentName: string;
-  label: string;
-  path: string;
-  resourceCount: number;
-  brokenCount: number;
-};
+export const rootRecordSchema = z.object({
+  id: z.string(),
+  kind: resourceKindSchema,
+  agentKey: z.string(),
+  agentName: z.string(),
+  label: z.string(),
+  path: z.string(),
+  resourceCount: z.number().int().nonnegative(),
+  brokenCount: z.number().int().nonnegative(),
+});
 
-export type KindSummary = {
-  kind: ResourceKind;
-  count: number;
-  brokenCount: number;
-  rootCount: number;
-};
+export const kindSummarySchema = z.object({
+  kind: resourceKindSchema,
+  count: z.number().int().nonnegative(),
+  brokenCount: z.number().int().nonnegative(),
+  rootCount: z.number().int().nonnegative(),
+});
 
-export type WorkspaceSnapshot = {
-  generatedAt: string;
-  userHome: string;
-  roots: RootRecord[];
-  resources: ResourceRecord[];
-  summaries: KindSummary[];
-};
+export const workspaceSnapshotSchema = z.object({
+  generatedAt: z.string(),
+  userHome: z.string(),
+  roots: z.array(rootRecordSchema),
+  resources: z.array(resourceRecordSchema),
+  summaries: z.array(kindSummarySchema),
+});
 
+export const openPathRequestSchema = z.object({
+  path: z.string().trim().min(1, "缺少 path"),
+});
+
+export type ResourceKind = z.infer<typeof resourceKindSchema>;
+export type ResourceStatus = z.infer<typeof resourceStatusSchema>;
+export type ResourceRecord = z.infer<typeof resourceRecordSchema>;
+export type RootRecord = z.infer<typeof rootRecordSchema>;
+export type KindSummary = z.infer<typeof kindSummarySchema>;
+export type WorkspaceSnapshot = z.infer<typeof workspaceSnapshotSchema>;

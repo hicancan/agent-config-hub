@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import { openInExplorer } from "@/lib/server/powershell";
 import { fileExists, getUserHome, normalizePath } from "@/lib/server/shared";
+import { openPathRequestSchema } from "@/lib/types";
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as { path?: string };
-    const targetPath = body.path?.trim();
-
-    if (!targetPath) {
-      return NextResponse.json({ message: "缺少 path" }, { status: 400 });
+    const parsed = openPathRequestSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ message: parsed.error.issues[0]?.message ?? "请求参数无效" }, { status: 400 });
     }
+    const targetPath = parsed.data.path;
 
     const home = normalizePath(getUserHome()).toLowerCase();
     const normalizedTarget = normalizePath(targetPath).toLowerCase();
@@ -29,4 +29,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ message }, { status: 500 });
   }
 }
-

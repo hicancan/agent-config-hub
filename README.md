@@ -2,7 +2,7 @@
 
 一个面向本机 AI agent 生态的统一控制台。它把分散在不同客户端、不同目录里的 `skills`、`rules`、`mcp` 资源拉回到同一张图里，让你先看清，再决定怎么治理。
 
-![Agent Config Hub screenshot](./public/screenshots/agent-config-hub-home.png)
+![Agent Config Hub screenshot](./public/screenshots/agent-config-hub-home-v2.png)
 
 ## Why
 
@@ -45,13 +45,20 @@
 - `Next.js 16`
 - `React 19`
 - `TypeScript 6`
+- `Tailwind CSS 4`
+- `shadcn/ui`
+- `Radix UI`
+- `Lucide`
+- `Zod 4`
 - `ESLint 9`
 
 这个组合非常适合这种本地控制台：
 
 - `Next.js App Router` 负责服务端读取本机资源和提供路由接口
 - `React` 负责搜索、筛选和浏览体验
-- `TypeScript` 负责统一建模 `skills / rules / mcp`
+- `Tailwind CSS 4 + shadcn/ui` 提供更高上限的白蓝控制台设计系统
+- `Radix UI` 提供无障碍基础能力
+- `TypeScript + Zod` 负责静态类型和运行时数据校验
 
 ## Current Coverage
 
@@ -81,10 +88,11 @@ src/
     layout.tsx
     page.tsx
   components/
+    ui/
     dashboard.tsx
-    dashboard.module.css
   lib/
     types.ts
+    utils.ts
     server/
       powershell.ts
       scan-mcp.ts
@@ -94,7 +102,7 @@ src/
       snapshot.ts
 public/
   screenshots/
-    agent-config-hub-home.png
+    agent-config-hub-home-v2.png
 ```
 
 ## Local Development
@@ -109,6 +117,18 @@ npm install
 
 ```powershell
 npm run dev
+```
+
+Windows 一键启动生产版：
+
+```powershell
+.\scripts\start-agent-config-hub.cmd
+```
+
+可选自定义端口：
+
+```powershell
+.\scripts\start-agent-config-hub.cmd 3005
 ```
 
 生产构建：
