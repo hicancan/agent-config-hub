@@ -29,6 +29,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+.next-dev*.log
+.next-start*.log
+.playwright-cli/
+playwright-readme-snapshot.yml
 
 # env files (can opt-in for committing if needed)
 .env*

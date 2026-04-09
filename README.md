@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Agent Config Hub
 
-## Getting Started
+一个面向本机 AI agent 生态的统一控制台。它把分散在不同客户端、不同目录里的 `skills`、`rules`、`mcp` 资源拉回到同一张图里，让你先看清，再决定怎么治理。
 
-First, run the development server:
+![Agent Config Hub screenshot](./public/screenshots/agent-config-hub-home.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Why
+
+本机 agent 用久了以后，问题通常不是“有没有配置”，而是：
+
+- 不知道哪些 agent 真正在用什么
+- `skills`、`rules`、`mcp` 分散在不同根目录里
+- Windows `Junction`、源目录、坏链混在一起，不容易一眼看清
+- 要继续扩展更多资源类型时，原来的脚本和零碎命令很难维护
+
+`Agent Config Hub` 的目标不是替代某个单一客户端，而是给整台机器做一层统一视图。
+
+## What It Does
+
+- 扫描本机 `skills` 根目录，并区分 `source`、`junction`、`broken-link`
+- 扫描本机 `rules` 目录并列出规则文件
+- 扫描常见 MCP 配置文件与目录，提取 `mcpServers` / `mcp_servers`
+- 在一个界面里统一展示资源流、统计卡片和根目录分布
+- 支持搜索、按资源类型过滤、刷新快照
+- 支持直接在资源管理器中打开定位到本地路径
+
+## Design Direction
+
+- `Web-first`：更适合统一看见、快速搜索、继续扩展
+- `Server-heavy`：服务端直接读取本机文件系统，客户端专注筛选与交互
+- `Windows-first`：优先处理本地真实目录结构、配置文件和 `Junction`
+- `Extensible`：今天先做 `skills / rules / mcp`，后面继续纳入更多 agent config
+
+## Tech Stack
+
+版本策略：
+
+- 有严格 `LTS` 的运行时，使用最新 `LTS`
+- 没有 `LTS` 的库，使用当前稳定版
+- 不做没有必要的精确锁死
+
+当前实现：
+
+- `Node.js 24 LTS`
+- `Next.js 16`
+- `React 19`
+- `TypeScript 6`
+- `ESLint 9`
+
+这个组合非常适合这种本地控制台：
+
+- `Next.js App Router` 负责服务端读取本机资源和提供路由接口
+- `React` 负责搜索、筛选和浏览体验
+- `TypeScript` 负责统一建模 `skills / rules / mcp`
+
+## Current Coverage
+
+当前已经覆盖这几类本地资源：
+
+- `skills`
+- `rules`
+- `mcp`
+
+其中 `mcp` 扫描会读取常见客户端配置，例如：
+
+- `.claude.json`
+- `.cursor/mcp.json`
+- `.gemini/settings.json`
+- `.config/opencode/opencode.json`
+- `.codex/config.toml`
+
+## Project Structure
+
+```text
+src/
+  app/
+    api/
+      open/route.ts
+      snapshot/route.ts
+    globals.css
+    layout.tsx
+    page.tsx
+  components/
+    dashboard.tsx
+    dashboard.module.css
+  lib/
+    types.ts
+    server/
+      powershell.ts
+      scan-mcp.ts
+      scan-rules.ts
+      scan-skills.ts
+      shared.ts
+      snapshot.ts
+public/
+  screenshots/
+    agent-config-hub-home.png
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+安装依赖：
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+npm install
+```
 
-## Learn More
+启动开发：
 
-To learn more about Next.js, take a look at the following resources:
+```powershell
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+生产构建：
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```powershell
+npm run build
+```
 
-## Deploy on Vercel
+代码检查：
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```powershell
+npm run lint
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+
+- 这是一个本地运行的控制台，不是云端多用户平台
+- 当前设计明显偏向 Windows 本机环境
+- 后续可以继续扩展到更多 agent 资源类型，而不只是 `skills`
