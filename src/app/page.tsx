@@ -1,10 +1,9 @@
-import { Dashboard } from "@/components/dashboard";
+import { ConfigExplorer } from "@/components/config-explorer";
 import { getWorkspaceSnapshot } from "@/lib/server/snapshot";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const snapshot = await getWorkspaceSnapshot();
-  return <Dashboard initialSnapshot={snapshot} />;
+  return <ConfigExplorer initialSnapshot={snapshot} />;
 }
-

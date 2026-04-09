@@ -57,6 +57,22 @@ export const openPathRequestSchema = z.object({
   path: z.string().trim().min(1, "缺少 path"),
 });
 
+export const resourceInstallRequestSchema = z.object({
+  resourceId: z.string().trim().min(1, "缺少 resourceId"),
+  destinationRootId: z.string().trim().min(1, "缺少 destinationRootId"),
+});
+
+export const resourceDeleteRequestSchema = z.object({
+  resourceId: z.string().trim().min(1, "缺少 resourceId"),
+});
+
+export const resourceActionResponseSchema = z.object({
+  message: z.string(),
+  snapshot: workspaceSnapshotSchema,
+  focusRootId: z.string().optional(),
+  focusResourceId: z.string().nullable().optional(),
+});
+
 export type ResourceKind = z.infer<typeof resourceKindSchema>;
 export type ResourceStatus = z.infer<typeof resourceStatusSchema>;
 export type ResourceRecord = z.infer<typeof resourceRecordSchema>;

@@ -38,6 +38,12 @@ export function normalizePath(input: string) {
   return input.replace(/\\/g, "/");
 }
 
+export function isWithinPath(basePath: string, targetPath: string) {
+  const normalizedBase = normalizePath(path.resolve(basePath)).toLowerCase();
+  const normalizedTarget = normalizePath(path.resolve(targetPath)).toLowerCase();
+  return normalizedTarget === normalizedBase || normalizedTarget.startsWith(`${normalizedBase}/`);
+}
+
 export function createAgentIdentity(rootPath: string) {
   const normalized = normalizePath(rootPath).toLowerCase();
   const match = AGENT_LABELS.find(([suffix]) => normalized.endsWith(suffix));
@@ -133,4 +139,3 @@ export function uniqueBy<T>(items: T[], keySelector: (item: T) => string) {
     return true;
   });
 }
-

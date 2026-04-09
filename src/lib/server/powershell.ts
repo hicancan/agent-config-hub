@@ -58,6 +58,26 @@ export async function openInExplorer(targetPath: string) {
   await runPowerShell(script);
 }
 
+export async function createDirectoryJunction(linkPath: string, targetPath: string) {
+  const script = `
+    $link = '${escapePs(linkPath)}'
+    $target = '${escapePs(targetPath)}'
+    $parent = Split-Path -Parent $link
+    if ($parent) {
+      New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    New-Item -ItemType Junction -Path $link -Target $target | Out-Null
+  `;
+  await runPowerShell(script);
+}
+
+export async function removeItemWithPowerShell(targetPath: string) {
+  const script = `
+    Remove-Item -LiteralPath '${escapePs(targetPath)}' -Force -Recurse -ErrorAction Stop
+  `;
+  await runPowerShell(script);
+}
+
 async function runPowerShell(script: string) {
   const { stdout } = await execFileAsync(
     "powershell",
